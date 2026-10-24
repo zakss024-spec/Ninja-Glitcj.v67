@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#05030c">
+  <title>NINJA GLITCH - Dashboard</title>
+  <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="responsive.css">
+  <script src="storage.js"></script>
+  <script>
+    /* Guard: tanpa session lokal -> kembali ke login (tanpa loop: login.html tidak mengarahkan balik tanpa session) */
+    if (window.NGStorage && NGStorage.get('session', '') !== '1') { location.replace('login.html'); }
+  </script>
+</head>
+<body data-page="dashboard">
+  <noscript>JavaScript diperlukan untuk menjalankan NINJA GLITCH.</noscript>
+
+  <div class="bg" aria-hidden="true"><div class="bg-glow"></div><div class="bg-grid"></div></div>
+  <canvas id="fx" class="fx" aria-hidden="true"></canvas>
+  <div class="scan" aria-hidden="true"></div>
+
+  <div class="app">
+    <header class="topbar">
+      <div class="ring sm"><img src="assets/images/ninja.svg" alt="" width="32" height="32"></div>
+      <div class="brand">
+        <b>NINJA GLITCH</b>
+        <small><span class="dot"></span><span id="topStatus">SYSTEM ONLINE</span></small>
+      </div>
+      <button class="iconbtn" id="logoutTop" type="button" aria-label="Logout">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v9M6.3 6.8a8 8 0 1 0 11.4 0"/></svg>
+      </button>
+    </header>
+
+    <!-- ===== HOME ===== -->
+    <section class="view" id="view-home" aria-label="Home">
+      <div class="grid">
+        <div class="card hero">
+          <div class="bh pulse" style="--bh:84px" aria-hidden="true"><div class="bh-ring"></div><div class="bh-ring r2"></div><div class="bh-core"></div></div>
+          <div>
+            <h2><span class="glitch glitch-shift" data-text="WELCOME, NINJA">WELCOME, NINJA</span></h2>
+            <p>Session lokal aktif - <span id="uptime">00:00</span></p>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>System Status <span class="badge p">SIMULATED</span></h3>
+          <div class="meter"><div class="row"><span>CPU CORE</span><b id="mCpuV">0%</b></div><div class="bar"><i id="mCpu"></i></div></div>
+          <div class="meter p"><div class="row"><span>MEMORY</span><b id="mMemV">0%</b></div><div class="bar"><i id="mMem"></i></div></div>
+          <div class="meter g"><div class="row"><span>VISUAL LOAD</span><b id="mGpuV">0%</b></div><div class="bar"><i id="mGpu"></i></div></div>
+          <ul class="kv" style="margin-top:8px">
+            <li><span>Viewport</span><b id="kvView">-</b></li>
+            <li><span>Network</span><b id="kvNet">-</b></li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>Security Status <span class="badge">LOCAL SIM</span></h3>
+          <ul class="kv">
+            <li><span>Session</span><b class="ok">VERIFIED</b></li>
+            <li><span>Biometric (sim)</span><b class="ok">GRANTED</b></li>
+            <li><span>Threat level (sim)</span><b class="cy">LOW</b></li>
+            <li><span>External requests</span><b class="ok">NONE</b></li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>Engine Status <span class="badge">LIVE</span></h3>
+          <ul class="kv">
+            <li><span>Visual engine</span><b class="ok">ONLINE</b></li>
+            <li><span>Glitch core</span><b class="ok" id="kvGlitch">READY</b></li>
+            <li><span>Particle FX</span><b id="kvFx">ON</b></li>
+            <li><span>Frame rate</span><b id="kvFps" class="cy">-- FPS</b></li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>Activity / Console <span class="badge p">LOCAL</span></h3>
+          <div class="console" id="console" role="log" aria-live="off" tabindex="0"></div>
+        </div>
+
+        <div class="card">
+          <h3>Developer</h3>
+          <div class="devs">
+            <div class="dev"><div class="ring sm"><img src="assets/images/ninja.svg" alt="" width="32" height="32"></div><small>DEVELOPER</small><b>ZAKSS</b></div>
+            <div class="dev"><div class="ring sm"><img src="assets/images/ninja.svg" alt="" width="32" height="32"></div><small>DEVELOPER</small><b>DAKA</b></div>
+            <div class="dev"><div class="ring sm"><img src="assets/images/ninja.svg" alt="" width="32" height="32"></div><small>DEVELOPER</small><b>NATHAN</b></div>
+          </div>
+        </div>
+      </div>
+      <p class="foot">NINJA GLITCH v1.0.0 - LOCAL SIMULATION ONLY</p>
+    </section>
+
+    <!-- ===== GLITCH ===== -->
+    <section class="view" id="view-glitch" aria-label="Glitch Simulator">
+      <div class="grid">
+        <div class="card">
+          <h3>Glitch Simulator <span class="badge" id="simBadge">IDLE</span></h3>
+          <p class="disclaimer">Simulasi visual lokal. Tidak mengakses jaringan, akun, atau perangkat apa pun.</p>
+
+          <div class="gl-stage" id="glStage" aria-hidden="true">
+            <div class="gl-art"><img src="assets/images/ninja.svg" alt="" width="64" height="64"><div class="gl-txt">NINJA GLITCH</div></div>
+            <div class="gl-layer a"><img src="assets/images/ninja.svg" alt="" width="64" height="64" style="opacity:.6"><div class="gl-txt">NINJA GLITCH</div></div>
+            <div class="gl-layer b"><img src="assets/images/ninja.svg" alt="" width="64" height="64" style="opacity:.6"><div class="gl-txt">NINJA GLITCH</div></div>
+          </div>
+
+          <div class="chips" role="group" aria-label="Intensitas">
+            <button class="chip" type="button" data-lvl="1" aria-pressed="false">LOW</button>
+            <button class="chip" type="button" data-lvl="2" aria-pressed="true">MID</button>
+            <button class="chip" type="button" data-lvl="3" aria-pressed="false">HIGH</button>
+          </div>
+
+          <div class="sim-status"><span id="simStatus" class="dim">STATUS: IDLE</span><span class="pct" id="simPct">0%</span></div>
+          <div class="pbar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="simBar"></i></div>
+
+          <div class="sim-row">
+            <button class="btn" id="simRun" type="button">RUN SIMULATION</button>
+            <button class="btn ghost" id="simAbort" type="button" hidden style="flex:0 0 auto">ABORT</button>
+          </div>
+
+          <div class="console" id="simConsole" role="log" aria-live="polite" hidden style="margin-top:14px"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== TOOLS ===== -->
+    <section class="view" id="view-tools" aria-label="Tools">
+      <div class="grid">
+        <div class="card">
+          <h3>Diagnostics</h3>
+          <p class="tool-desc">Cek cepat kesehatan aplikasi di perangkat ini.</p>
+          <button class="btn block" id="diagRun" type="button">RUN CHECK</button>
+          <ul class="kv" id="diagOut" style="margin-top:10px" hidden></ul>
+        </div>
+
+        <div class="card">
+          <h3>Simulation History <span class="badge p" id="histCount">0</span></h3>
+          <ul class="list" id="histList"></ul>
+          <button class="btn ghost sm block" id="histClear" type="button" style="margin-top:10px">CLEAR HISTORY</button>
+        </div>
+
+        <div class="card">
+          <h3>Utilities</h3>
+          <div class="btn-col">
+            <button class="btn ghost" id="exportLog" type="button">EXPORT CONSOLE LOG (.TXT)</button>
+            <button class="btn ghost" id="clearConsole" type="button">CLEAR CONSOLE</button>
+            <button class="btn ghost" id="replayLoading" type="button">REPLAY NINJA LOADING</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SETTINGS ===== -->
+    <section class="view" id="view-settings" aria-label="Settings">
+      <div class="grid">
+        <div class="card">
+          <h3>Visual Settings</h3>
+          <div class="switch-row"><div><b>Particle effect</b><small>Partikel neon di latar</small></div><button class="switch" type="button" role="switch" data-setting="particles" aria-checked="true" aria-label="Particle effect"></button></div>
+          <div class="switch-row"><div><b>Scanlines</b><small>Garis scan CRT</small></div><button class="switch" type="button" role="switch" data-setting="scanlines" aria-checked="true" aria-label="Scanlines"></button></div>
+          <div class="switch-row"><div><b>Glitch effect</b><small>Efek glitch ringan pada teks</small></div><button class="switch" type="button" role="switch" data-setting="glitch" aria-checked="true" aria-label="Glitch effect"></button></div>
+          <div class="switch-row"><div><b>Reduce motion</b><small>Matikan animasi (hemat baterai)</small></div><button class="switch" type="button" role="switch" data-setting="reduce" aria-checked="false" aria-label="Reduce motion"></button></div>
+        </div>
+
+        <div class="card">
+          <h3>Session</h3>
+          <div class="btn-col">
+            <button class="btn ghost" id="replayIntro" type="button">REPLAY INTRO</button>
+            <button class="btn ghost" id="resetData" type="button">RESET LOCAL DATA</button>
+            <button class="btn danger" id="logoutBtn" type="button">LOGOUT</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>About</h3>
+          <ul class="kv">
+            <li><span>Project</span><b>NINJA-GLITCH-FINAL</b></li>
+            <li><span>Version</span><b>1.0.0</b></li>
+            <li><span>Mode</span><b class="ok">LOCAL SIMULATION</b></li>
+            <li><span>Developers</span><b>ZAKSS / DAKA / NATHAN</b></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <nav class="bnav" aria-label="Navigasi utama">
+    <button class="nav-btn" type="button" data-view="home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>
+      <span>HOME</span>
+    </button>
+    <button class="nav-btn" type="button" data-view="glitch">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg>
+      <span>GLITCH</span>
+    </button>
+    <button class="nav-btn" type="button" data-view="tools">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.1L3 17.7 6.3 21l6.3-6.3a4 4 0 0 0 5.1-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/></svg>
+      <span>TOOLS</span>
+    </button>
+    <button class="nav-btn" type="button" data-view="settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h9M17 6h3M4 12h3M11 12h9M4 18h11M19 18h1"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="18" r="2"/></svg>
+      <span>SETTINGS</span>
+    </button>
+  </nav>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="animation.js"></script>
+  <script src="navigation.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
